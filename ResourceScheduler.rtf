@@ -4,7 +4,9 @@
 \paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\f0\fs24 \cf0 First create the interfaces:\
+\f0\fs24 \cf0 I decided not to implement the gateway interface, but to create a setGateway function in the ResourceScheduler, so it can call the send method of the Gateway provided to it. So anyone who implements his own Gateway can pass it to the ResourceScheduler, and the ResourceScheduler will receive messages by implementing MessageReceiver interface, process and queue those messages, and call its Gateway member\'92s send method. Message class has a callback member, which is called when the message is completed. ResourceScheduler implements the MessageCallback interface, and sets itself as every message\'92s Callback, like a push model. I first created the interfaces, than created some basic test cases. After that I created basic implementation for the functions in ResourceScheduler, like queuing without any priority, and tested them, and continued extending the functionality and testing iteratively until I completed the program.\
+\
+First create the interfaces:\
 	-Gateway and Message are given\
 	-For the completed method to be able to define the group of the message, a CallbackMessage 	interface.\
 	-MessageReceiver is basically anyone who can receive messages\
@@ -26,6 +28,10 @@ Implementation:\
 Extensions:\
 	-A message can have a terminated state, if a message like this received, we should store its id 	in a Set to make sure this is the last one to be sent.\
 	-ResourceScheduler can be set up with a Set of groupIds, and if the received message is part of 	any of these group, gateway should not receive it\
+\
+Using the software:\
+	-MessageImpl is for testing, please provide your own message type that implements Message 	interface.\
+	-Gateway is mocked right now, the tests run with that, but to run the program a custom 	implementation of Gateway is required.\
 \
 3rd party libraries:\
 	-mockito-all-1.9.5.jar\
