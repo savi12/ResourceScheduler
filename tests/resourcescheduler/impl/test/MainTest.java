@@ -50,14 +50,14 @@ public class MainTest {
 	}
 	
 	@Test
-	public void isQueuEmptyAfterReceive() {
+	public void isQueueEmptyAfterReceive() {
 		scheduler.receive(m1_g1);
 		verify(testGateway,times(1)).send(m1_g1);;
 		assertEquals(Collections.EMPTY_MAP, scheduler.getMessageQueu());
 	}
 
 	@Test
-	public void isQueuNotEmptyAfterReceive() {
+	public void isQueueNotEmptyAfterReceive() {
 		scheduler.receive(m1_g1);
 		scheduler.receive(m2_g2);
 		scheduler.receive(m3_g3);
@@ -95,7 +95,6 @@ public class MainTest {
 		m1_g1.completed();
 		verify(testGateway,times(1)).send(m7_g1);
 		verify(testGateway,times(0)).send(m4_g2);		
-
 	}
 	
 	@Test
@@ -111,8 +110,6 @@ public class MainTest {
 		verify(testGateway,times(0)).send(m4_g2);
 		m5_g1.completed();
 		verify(testGateway,times(1)).send(m4_g2);
-
-
 	}
 	
 	@Test

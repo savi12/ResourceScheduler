@@ -16,8 +16,8 @@ import resourcescheduler.services.MessageReceiver;
 public class ResourceScheduler implements MessageReceiver,
 		MessageCallback<Message> {
 
-	private final Map<Integer, ArrayList<Message>> messageQueu = new HashMap<Integer, ArrayList<Message>>();
-	private ArrayList<Integer> groupIdQueu = new ArrayList<>();
+	private final Map<Integer, ArrayList<Message>> messageQueue = new HashMap<Integer, ArrayList<Message>>();
+	private ArrayList<Integer> groupIdQueue = new ArrayList<>();
 
 	private Set<Integer> terminatedMessages = new HashSet<>();
 	private Set<Integer> cancelledGroups = new HashSet<>();
@@ -33,7 +33,7 @@ public class ResourceScheduler implements MessageReceiver,
 	 * @return
 	 */
 	public Map<Integer, ArrayList<Message>> getMessageQueu() {
-		return messageQueu;
+		return messageQueue;
 	}
 
 	public ResourceScheduler(int maximumAvailableResources) {
@@ -64,26 +64,26 @@ public class ResourceScheduler implements MessageReceiver,
 			sendToGateway(msg);
 			availableResources--;
 		} else {
-			ArrayList<Message> messagesWithSameGroupId = messageQueu.get(msg
+			ArrayList<Message> messagesWithSameGroupId = messageQueue.get(msg
 					.getGroupId());
 			if (messagesWithSameGroupId == null) {
 				messagesWithSameGroupId = new ArrayList<>();
-				messageQueu.put(msg.getGroupId(), messagesWithSameGroupId);
+				messageQueue.put(msg.getGroupId(), messagesWithSameGroupId);
 			}
 			messagesWithSameGroupId.add(msg);
-			groupIdQueu.add(msg.getGroupId());
+			groupIdQueue.add(msg.getGroupId());
 		}
 	}
 
 	@Override
 	public void executeCallback(Message message) {
-		ArrayList<Message> messagesWithSameGroupId = messageQueu.get(message
+		ArrayList<Message> messagesWithSameGroupId = messageQueue.get(message
 				.getGroupId());
 		if (messagesWithSameGroupId != null
 				&& !messagesWithSameGroupId.isEmpty()) {
 			sendToGateway(messagesWithSameGroupId.remove(0));
-		} else if (!groupIdQueu.isEmpty()) {
-			messagesWithSameGroupId = messageQueu.get(groupIdQueu.remove(0));
+		} else if (!groupIdQueue.isEmpty()) {
+			messagesWithSameGroupId = messageQueue.get(groupIdQueue.remove(0));
 			sendToGateway(messagesWithSameGroupId.remove(0));
 		} else {
 			availableResources++;
